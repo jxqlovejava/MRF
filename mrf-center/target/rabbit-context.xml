@@ -1,0 +1,26 @@
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:rabbit="http://www.springframework.org/schema/rabbit"
+	xmlns:util="http://www.springframework.org/schema/util"
+	xsi:schemaLocation="http://www.springframework.org/schema/rabbit
+                           http://www.springframework.org/schema/rabbit/spring-rabbit-1.0.xsd
+                           http://www.springframework.org/schema/beans
+                           http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
+                           http://www.springframework.org/schema/util
+						   http://www.springframework.org/schema/util/spring-util-3.0.xsd">
+		
+	<util:properties id="rabbit" location="classpath:rabbit.properties" />
+	<rabbit:connection-factory id="connectionFactory"
+		host="#{rabbit['rabbit.connect.host']}" port="#{rabbit['rabbit.connect.port']}"
+		username="#{rabbit['rabbit.connect.username']}" password="#{rabbit['rabbit.connect.password']}" />
+
+	<rabbit:template id="rabbitTemplate" connection-factory="connectionFactory" />
+
+	<rabbit:admin connection-factory="connectionFactory" />
+
+	<rabbit:queue name="#{rabbit['mrf.exception.queue']}" durable="true"></rabbit:queue>
+
+<!-- 	<bean id="messageConverter"
+		class="org.springframework.amqp.support.converter.JsonMessageConverter">
+	</bean> -->
+	
+</beans>

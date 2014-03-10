@@ -1,0 +1,81 @@
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:rabbit="http://www.springframework.org/schema/rabbit"
+	xmlns:util="http://www.springframework.org/schema/util"
+	xsi:schemaLocation="http://www.springframework.org/schema/rabbit
+                           http://www.springframework.org/schema/rabbit/spring-rabbit-1.0.xsd
+                           http://www.springframework.org/schema/beans
+                           http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
+                           http://www.springframework.org/schema/util
+		http://www.springframework.org/schema/util/spring-util-3.0.xsd">
+           
+ 	<rabbit:connection-factory id="connectionFactory"
+		host="localhost" port="5672" username="guest" password="guest" />
+<!-- 	<bean id="connectionFactory" class="com.rabbitmq.client.ConnectionFactory">
+		<property name="host" value="localhost" />
+		<property name="port" value="5672" />
+		<property name="username" value="guest" />
+		<property name="password" value="guest" />
+		<property name="requestedHeartbeat" value="10" />
+	</bean> -->
+
+	<bean id="messageConverter"
+		class="org.springframework.amqp.support.converter.JsonMessageConverter">
+	</bean>
+	
+	<rabbit:template id="rabbitTemplate"
+		connection-factory="connectionFactory" message-converter="messageConverter"  />
+
+	<rabbit:admin connection-factory="connectionFactory" />
+
+	<rabbit:queue name="feedQ" durable="true"></rabbit:queue>
+	<rabbit:queue name="feedQ2" durable="true"></rabbit:queue>
+	<rabbit:queue name="readQ" durable="true"></rabbit:queue>
+
+	<bean id="feedHandler" class="com.nali.mrfclient.callermock.FeedHandler" />
+	<bean id="feedListener"
+		class="org.springframework.amqp.rabbit.listener.adapter.MessageListenerAdapter">
+		<constructor-arg ref="feedHandler">
+		</constructor-arg>
+		<property name="defaultListenerMethod" value="onMessage"></property>
+		<property name="messageConverter" ref="messageConverter"></property>
+	</bean>
+	<bean id="feedListenerContainer"
+		class="org.springframework.amqp.rabbit.listener.SimpleMessageListenerContainer">
+		<property name="queueNames" value="feedQ"></property>
+		<property name="connectionFactory" ref="connectionFactory"></property>
+		<property name="messageListener" ref="feedListener"></property>
+		<property name="concurrentConsumers" value="1"></property>
+	</bean>
+	
+	<bean id="feedHandler2" class="com.nali.mrfclient.callermock.FeedHandler2" />
+	<bean id="feedListener2"
+		class="org.springframework.amqp.rabbit.listener.adapter.MessageListenerAdapter">
+		<constructor-arg ref="feedHandler2">
+		</constructor-arg>
+		<property name="defaultListenerMethod" value="onMessage"></property>
+		<property name="messageConverter" ref="messageConverter"></property>
+	</bean>
+	<bean id="feedListenerContainer2"
+		class="org.springframework.amqp.rabbit.listener.SimpleMessageListenerContainer">
+		<property name="queueNames" value="feedQ2"></property>
+		<property name="connectionFactory" ref="connectionFactory"></property>
+		<property name="messageListener" ref="feedListener2"></property>
+		<property name="concurrentConsumers" value="1"></property>
+	</bean>
+	
+	<bean id="readHandler" class="com.nali.mrfclient.callermock.ReadHandler" />
+	<bean id="readListener"
+		class="org.springframework.amqp.rabbit.listener.adapter.MessageListenerAdapter">
+		<constructor-arg ref="readHandler">
+		</constructor-arg>
+		<property name="defaultListenerMethod" value="onMessage"></property>
+		<property name="messageConverter" ref="messageConverter"></property>
+	</bean>
+	<bean id="readListenerContainer"
+		class="org.springframework.amqp.rabbit.listener.SimpleMessageListenerContainer">
+		<property name="queueNames" value="readQ"></property>
+		<property name="connectionFactory" ref="connectionFactory"></property>
+		<property name="messageListener" ref="readListener"></property>
+		<property name="concurrentConsumers" value="1"></property>
+	</bean>
+</beans>

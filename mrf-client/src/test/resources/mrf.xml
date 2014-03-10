@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<retryConf>
+	<retryService businessName="feed">
+		<retryQueue businessQueue="feedQ">
+			<retryInterval>0</retryInterval>
+			<retryTimes>5</retryTimes>
+			<retryException>java.io.IOException,java.lang.IllegalArgumentException</retryException>
+		</retryQueue>
+		<retryQueue businessQueue="feedQ2">
+			<retryInterval>3000</retryInterval>
+			<retryTimes>3</retryTimes>
+		</retryQueue>
+	</retryService>
+	
+	<retryService businessName="read">
+		<retryQueue businessQueue="readQ">
+			<retryInterval>0</retryInterval>
+			<retryTimes>-1</retryTimes>
+		</retryQueue>
+	</retryService>
+</retryConf>

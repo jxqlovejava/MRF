@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE sqlMap PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN"
+						"http://ibatis.apache.org/dtd/sql-map-2.dtd">
+<sqlMap namespace="ClientConfig">
+	<typeAlias alias="clientConfig" type="com.nali.mrfcenter.domain.ClientConfig" />
+	<!-- Cache -->
+	<cacheModel id="clientConfigCache" type="LRU">
+		<flushInterval hours="2"/>
+		<flushOnExecute statement="addClientConfig"/>
+		<flushOnExecute statement="updateClientConfig"/>
+		<property name="size" value="50" />
+	</cacheModel>
+	
+	<select id="getAllClientConfigs" cacheModel="clientConfigCache" resultClass="clientConfig">
+		<![CDATA[
+		SELECT
+		id,
+		host,
+		port,
+		username,
+		password,
+		retry_queue_name AS retryQueueName,
+		client_service_name AS clientServiceName
+		FROM client_config
+		]]>
+	</select>
+	
+	<parameterMap id="getClientConfig-param" class="clientConfig">
+		<parameter property="retryQueueName" />
+		<parameter property="clientServiceName" />
+	</parameterMap>
+	<select id="getClientConfig" cacheModel="clientConfigCache" parameterMap="getClientConfig-param" resultClass="clientConfig">
+		<![CDATA[
+		SELECT
+		id,
+		host,
+		port,
+		username,
+		password,
+		retry_queue_name AS retryQueueName,
+		client_service_name AS clientServiceName
+		FROM client_config
+		WHERE retry_queue_name=? AND client_service_name=?
+		LIMIT 1
+		]]>
+	</select>
+	
+	<insert id="addClientConfig" parameterClass="clientConfig">
+		<![CDATA[
+		INSERT INTO client_config
+		(host, port, username, password, retry_queue_name, client_service_name)
+		VALUES
+		(#host#, #port#, #username#, #password#, #retryQueueName#, #clientServiceName#)
+		]]>
+		<selectKey resultClass="int" keyProperty="id" >
+			SELECT LAST_INSERT_ID()
+		</selectKey>
+	</insert>
+	
+	<!-- TODO may support dynamic statement later -->
+	<update id="updateClientConfig" parameterClass="clientConfig">
+		<![CDATA[
+		UPDATE client_config
+		SET 
+		host=#host#, port=#port#, username=#username#, password=#password#
+		WHERE
+		retry_queue_name=#retryQueueName# AND client_service_name=#clientServiceName#
+		]]>
+	</update>
+</sqlMap>

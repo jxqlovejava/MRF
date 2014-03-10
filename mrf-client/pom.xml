@@ -1,0 +1,62 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+
+	<parent>
+		<groupId>com.nali</groupId>
+		<artifactId>mrf-parent</artifactId>
+		<version>0.0.3-SNAPSHOT</version>
+		<relativePath>../mrf-parent/pom.xml</relativePath>
+	</parent>
+
+	<groupId>com.nali</groupId>
+	<artifactId>mrf-client</artifactId>
+	<version>0.0.3-SNAPSHOT</version>
+	<packaging>jar</packaging>
+
+	<name>mrf-client</name>
+	<url>http://maven.apache.org</url>
+
+	<properties>
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+	</properties>
+
+	<dependencies>
+		<dependency>
+			<groupId>com.nali</groupId>
+			<artifactId>mrf-core</artifactId>
+			<version>0.0.3-SNAPSHOT</version>
+		</dependency>
+		
+		<dependency>
+		     <groupId>com.alibaba</groupId>
+		     <artifactId>fastjson</artifactId>
+		     <version>1.1.36</version>
+		</dependency>
+	</dependencies>
+
+	<build>
+		<finalName>mrf-client</finalName>
+	</build>
+
+	<profiles>
+		<profile>
+			<id>base</id>
+			<activation>
+				<activeByDefault>true</activeByDefault>
+			</activation>
+			<properties>
+				<envcfg.dir>dev</envcfg.dir>
+			</properties>
+		</profile>
+		<profile>
+			<id>test</id>
+			<properties>
+				<envcfg.dir>test</envcfg.dir>
+			</properties>
+		</profile>
+		<!-- <profile> <id>test-out</id> <properties> <envcfg.dir>test-out</envcfg.dir> 
+			</properties> </profile> <profile> <id>product</id> <properties> <envcfg.dir>product</envcfg.dir> 
+			</properties> </profile> -->
+	</profiles>
+</project>

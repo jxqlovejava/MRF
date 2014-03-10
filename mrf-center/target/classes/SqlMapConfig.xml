@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE sqlMapConfig
+		  PUBLIC "-//iBATIS.com//DTD SQL Map Config 2.0//EN"
+		  "http://www.ibatis.com/dtd/sql-map-config-2.dtd">
+<sqlMapConfig>
+	<!-- Load properties file -->
+	<!-- <properties resource="classpath:jdbc.properties" /> -->
+	<settings cacheModelsEnabled="true" enhancementEnabled="true" lazyLoadingEnabled="true" 
+				maxRequests="32" maxSessions="10" maxTransactions="5" useStatementNamespaces="false" />
+	
+	<!-- Configure a datasource to use with this SQL Map using SimpleDataSource. 
+		Notice the use of the properties from the above resource -->
+<!-- 	<transactionManager type="JDBC">
+		<dataSource type="SIMPLE">  or DBCP or JNDI
+			<property name="JDBC.Driver" value="${jdbc.driverClassName=}" />
+			<property name="JDBC.ConnectionURL" value="${jdbc.url}" />
+			<property name="JDBC.Username" value="${jdbc.username}" />
+			<property name="JDBC.Password" value="${jdbc.password}" />
+			<property name="JDBC.DefaultAutoCommit" value="true" />
+			<property name="Pool.MaximumActiveConnections" value="10" />
+			<property name="Pool.MaximumIdleConnections" value="5" />
+			<property name="Pool.MaximumCheckoutTime" value="120000" />
+			<property name="Pool.TimeToWait" value="2000" />
+			<property name="Pool.PingQuery" value="select 1 from DUAL" />
+			<property name="Pool.PingEnabled" value="false" />
+			<property name="Pool.PingConnectionsOlderThan" value="1" />
+			<property name="Pool.PingConnectionsNotUsedFor" value="1" />
+		</dataSource>
+	</transactionManager> -->
+	
+	<!-- SQL Map XML files -->
+	<sqlMap resource="ibatis/ClientConfig.xml" />
+	<sqlMap resource="ibatis/IntervalRetry.xml" />
+	<sqlMap resource="ibatis/Recover.xml" />
+</sqlMapConfig>

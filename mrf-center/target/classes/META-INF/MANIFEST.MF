@@ -1,0 +1,36 @@
+Manifest-Version: 1.0
+Built-By: will
+Build-Jdk: 1.6.0_45
+Class-Path: conf/ lib/mrf-core-0.0.3-SNAPSHOT.jar lib/libthrift-0.9.1.
+ jar lib/commons-lang3-3.1.jar lib/httpclient-4.2.5.jar lib/commons-co
+ dec-1.6.jar lib/httpcore-4.2.4.jar lib/thrift-ext-0.0.5.jar lib/log4j
+ -1.2.17.jar lib/slf4j-log4j12-1.6.4.jar lib/slf4j-api-1.6.4.jar lib/j
+ cl-over-slf4j-1.6.4.jar lib/spring-aop-3.1.1.RELEASE.jar lib/aopallia
+ nce-1.0.jar lib/spring-asm-3.1.1.RELEASE.jar lib/spring-aspects-3.1.1
+ .RELEASE.jar lib/spring-beans-3.1.1.RELEASE.jar lib/spring-context-3.
+ 1.1.RELEASE.jar lib/spring-context-support-3.1.1.RELEASE.jar lib/spri
+ ng-core-3.1.1.RELEASE.jar lib/commons-logging-1.1.1.jar lib/spring-ex
+ pression-3.1.1.RELEASE.jar lib/spring-instrument-3.1.1.RELEASE.jar li
+ b/spring-instrument-tomcat-3.1.1.RELEASE.jar lib/spring-jdbc-3.1.1.RE
+ LEASE.jar lib/spring-jms-3.1.1.RELEASE.jar lib/spring-orm-3.1.1.RELEA
+ SE.jar lib/spring-oxm-3.1.1.RELEASE.jar lib/commons-lang-2.5.jar lib/
+ spring-test-3.1.1.RELEASE.jar lib/spring-tx-3.1.1.RELEASE.jar lib/spr
+ ing-web-3.1.1.RELEASE.jar lib/spring-webmvc-3.1.1.RELEASE.jar lib/spr
+ ing-webmvc-portlet-3.1.1.RELEASE.jar lib/ibatis-2.3.4.726.jar lib/hes
+ sian-4.0.7.jar lib/collections-0.9.jar lib/commons-collections-3.2.1.
+ jar lib/spring-data-redis-1.0.1.RELEASE.jar lib/jedis-2.1.0.jar lib/c
+ ommon-1.8.2.jar lib/guava-14.0.1.jar lib/gson-2.2.4.jar lib/log-0.9.j
+ ar lib/lang-0.9.7.jar lib/spring-amqp-1.2.0.RELEASE.jar lib/spring-ra
+ bbit-1.2.0.RELEASE.jar lib/amqp-client-3.1.3.jar lib/jackson-core-asl
+ -1.9.12.jar lib/jackson-mapper-asl-1.9.12.jar lib/mysql-connector-jav
+ a-5.1.25.jar lib/cglib-2.2.2.jar lib/asm-3.3.1.jar lib/servercenter-a
+ pi-0.9.1.jar lib/resolver-0.9.jar lib/jstl-1.1.2.jar lib/standard-1.1
+ .2.jar lib/commons-dbcp-1.2.2.jar lib/commons-pool-1.3.jar
+Specification-Title: mrf-center Maven Webapp
+Specification-Version: 0.0.3-SNAPSHOT
+Implementation-Title: mrf-center Maven Webapp
+Implementation-Version: 0.0.3-SNAPSHOT
+Implementation-Vendor-Id: com.nali
+Main-Class: com.nali.mrfcenter.console.ConsoleRunner
+Created-By: Maven Integration for Eclipse
+

@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE sqlMap PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN"
+						"http://ibatis.apache.org/dtd/sql-map-2.dtd">
+<sqlMap namespace="Recover">
+	<typeAlias alias="recover" type="com.nali.mrfcenter.domain.Recover" />
+	
+	<select id="getRecover" parameterClass="long" resultClass="recover">
+		<![CDATA[
+		SELECT
+		id,
+		msg_id AS msgID,
+		recover_state AS recoverState,
+		retry_queue_name AS retryQueueName,
+		business_msg AS businessMsg,
+		retry_interval AS retryInterval,
+		retried_times AS retriedTimes,
+		max_retry_times AS maxRetryTimes,
+		checkout_at AS checkoutAt,
+		updated_at AS updatedAt,
+		created_at AS createdAt
+		FROM recover
+		WHERE msg_id=#value#
+		LIMIT 1
+		]]>
+	</select>
+	
+<!-- 	<parameterMap class="java.util.HashMap" id="getRecover_paramMap">
+		<parameter property="offset" />
+		<parameter property="pageSize" />
+	</parameterMap> -->
+	<select id="getPageRecovers" parameterClass="java.util.Map" resultClass="recover">
+		<![CDATA[
+		SELECT
+		id,
+		msg_id AS msgID,
+		recover_state AS recoverState,
+		retry_queue_name AS retryQueueName,
+		business_msg AS businessMsg,
+		retry_interval AS retryInterval,
+		retried_times AS retriedTimes,
+		max_retry_times AS maxRetryTimes,
+		checkout_at AS checkoutAt,
+		updated_at AS updatedAt,
+		created_at AS createdAt
+		FROM recover
+		LIMIT #offset#, #pageSize#
+		]]>
+	</select>
+	
+	<select id="getTotalRecoverCount" resultClass="int">
+		<![CDATA[
+		SELECT
+		count(*)
+		FROM recover
+		]]>
+	</select>
+	
+	<insert id="addRecover" parameterClass="recover">
+		<![CDATA[
+		INSERT INTO recover
+		(msg_id, recover_state, retry_queue_name, business_msg, retry_interval, retried_times, 
+		 max_retry_times, checkout_at, updated_at, created_at)
+		VALUES
+		(#msgID#, #recoverState#, #retryQueueName#, #businessMsg#, #retryInterval#, #retriedTimes#,
+		 #maxRetryTimes#, #checkoutAt#, IFNULL(#updatedAt#, CURRENT_TIMESTAMP), IFNULL(#createdAt#, CURRENT_TIMESTAMP))
+		]]>
+		<selectKey resultClass="int" keyProperty="id" >
+			SELECT LAST_INSERT_ID()
+		</selectKey>
+	</insert>
+	
+	<delete id="deleteRecover" parameterClass="long">
+		<![CDATA[
+		DELETE FROM recover
+		WHERE msg_id=#value#
+		]]>
+	</delete>
+	
+	<update id="checkInRecover" parameterClass="long">
+		<![CDATA[
+		UPDATE recover
+		SET recover_state=0, updated_at=CURRENT_TIMESTAMP
+		WHERE msg_id=#value#
+		]]>
+	</update>
+	
+	<update id="checkOutRecover" parameterClass="long">
+		<![CDATA[
+		UPDATE recover
+		SET recover_state=1, checkout_at=CURRENT_TIMESTAMP, updated_at=CURRENT_TIMESTAMP
+		WHERE msg_id=#value#
+		]]>
+	</update>
+	
+</sqlMap>

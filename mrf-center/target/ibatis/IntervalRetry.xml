@@ -1,0 +1,120 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE sqlMap PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN"
+						"http://ibatis.apache.org/dtd/sql-map-2.dtd">
+<sqlMap namespace="IntervalRetry">
+	<typeAlias alias="intervalRetry" type="com.nali.mrfcenter.domain.IntervalRetry" />
+	
+	<select id="getIntervalRetry" parameterClass="long" resultClass="intervalRetry">
+		<![CDATA[
+		SELECT
+			id,
+			msg_id AS msgID,
+			retry_state AS retryState,
+			retry_queue_name AS retryQueueName,
+			business_msg AS businessMsg,
+			retry_interval AS retryInterval,
+			retried_times AS retriedTimes,
+			max_retry_times AS maxRetryTimes,
+			next_exec_at AS nextExecAt,
+			checkout_at AS checkoutAt,
+			updated_at AS updatedAt,
+			created_at AS createdAt
+		FROM interval_retry
+		WHERE msg_id=#value#
+		LIMIT 1
+		]]>
+	</select>
+	
+	<select id="getIntervalRetriesOutOfThreshold" parameterClass="long" resultClass="intervalRetry">
+		<![CDATA[
+		SELECT
+			id,
+			msg_id AS msgID,
+			retry_state AS retryState,
+			retry_queue_name AS retryQueueName,
+			business_msg AS businessMsg,
+			retry_interval AS retryInterval,
+			retried_times AS retriedTimes,
+			max_retry_times AS maxRetryTimes,
+			next_exec_at AS nextExecAt,
+			checkout_at AS checkoutAt,
+			updated_at AS updatedAt,
+			created_at AS createdAt
+		FROM interval_retry
+		WHERE retry_state = 1 AND CURRENT_TIMESTAMP > (checkout_at + #value#)
+		]]>
+	</select>
+	
+	<select id="getMostUrgentIntervalRetry" parameterClass="int" resultClass="intervalRetry">
+		<![CDATA[
+		SELECT
+			id,
+			msg_id AS msgID,
+			retry_state AS retryState,
+			retry_queue_name AS retryQueueName,
+			business_msg AS businessMsg,
+			retry_interval AS retryInterval,
+			retried_times AS retriedTimes,
+			max_retry_times AS maxRetryTimes,
+			next_exec_at AS nextExecAt,
+			checkout_at AS checkoutAt,
+			updated_at AS updatedAt,
+			created_at AS createdAt
+		FROM interval_retry
+		WHERE retry_state = 0
+		ORDER BY next_exec_at ASC
+		LIMIT #value#
+		]]>
+	</select>
+	
+	<insert id="addIntervalRetry" parameterClass="intervalRetry">
+		<![CDATA[
+		INSERT INTO interval_retry
+		(msg_id, retry_state, retry_queue_name, business_msg, retry_interval, retried_times, 
+		 max_retry_times, next_exec_at, checkout_at, updated_at, created_at)
+		VALUES
+		(#msgID#, #retryState#, #retryQueueName#, #businessMsg#, #retryInterval#, #retriedTimes#,
+		 #maxRetryTimes#, #nextExecAt#, #checkoutAt#, IFNULL(#updatedAt#, CURRENT_TIMESTAMP), IFNULL(#createdAt#, CURRENT_TIMESTAMP))
+		]]>
+		<selectKey resultClass="int" keyProperty="id" >
+			SELECT LAST_INSERT_ID()
+		</selectKey>
+	</insert>
+	
+	<delete id="deleteIntervalRetry" parameterClass="long">
+		<![CDATA[
+		DELETE 
+		FROM interval_retry  
+		WHERE msg_id=#value#
+		]]>
+	</delete>
+	
+	<update id="checkinIntervalRetry" parameterClass="intervalRetry">
+		<![CDATA[
+		UPDATE interval_retry
+		SET retry_state=0, retry_queue_name=#retryQueueName#, business_msg=#businessMsg#, retry_interval=#retryInterval#, 
+			retried_times=#retriedTimes#, max_retry_times=#maxRetryTimes#, next_exec_at=#nextExecAt#, checkout_at=#checkoutAt#, 
+			updated_at=CURRENT_TIMESTAMP, created_at=#createdAt#
+		WHERE msg_id=#msgID#
+		]]>
+	</update>
+	
+	<update id="checkOutIntervalRetry" parameterClass="long">
+		<![CDATA[
+		UPDATE interval_retry
+		SET retry_state=1, checkout_at=CURRENT_TIMESTAMP, updated_at=CURRENT_TIMESTAMP
+		WHERE msg_id=#value# AND retry_state=0
+		]]>
+	</update>
+	
+<!-- 	<update id="batchHouseKeep" parameterClass="list">
+		<![CDATA[
+		UPDATE interval_retry
+		SET retry_state=0, updated_at=CURRENT_TIMESTAMP
+		WHERE msg_id IN
+		]]>
+		<iterate open="(" close=")" conjunction=",">
+			#[]#
+		</iterate>
+	</update> -->
+</sqlMap>

@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:aop="http://www.springframework.org/schema/aop" xmlns:tx="http://www.springframework.org/schema/tx"
+	xmlns:util="http://www.springframework.org/schema/util"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans
+		http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
+		http://www.springframework.org/schema/aop
+		http://www.springframework.org/schema/aop/spring-aop-3.0.xsd
+		http://www.springframework.org/schema/context
+		http://www.springframework.org/schema/context/spring-context-3.0.xsd
+		http://www.springframework.org/schema/tx
+		http://www.springframework.org/schema/tx/spring-tx-3.0.xsd
+		http://www.springframework.org/schema/util
+		http://www.springframework.org/schema/util/spring-util-3.0.xsd
+		"
+	default-lazy-init="false">
+	<!-- <context:property-placeholder system-properties-mode="OVERRIDE"/> pick 
+		up rabbit broker configuration <context:component-scan base-package="org.springframework.amqp.rabbit.stocks.config.server"/> -->
+	<bean id="feedHandler" class="com.nali.mrfclient.callermock.FeedHandler" />
+	<bean id="feedHandler2" class="com.nali.mrfclient.callermock.FeedHandler2" />
+	<bean id="readHandler" class="com.nali.mrfclient.callermock.ReadHandler" />
+
+	<!-- RabbitMQ Configuration -->
+	<import resource="classpath:rabbit-context.xml" />
+
+	<!-- retry service configuration -->
+	<bean id="mrfClientServiceStarter" class="com.nali.mrfclient.service.MRFClientServiceStarter">
+		<constructor-arg index="0" ref="feedRetryServiceConfig" />
+		<constructor-arg index="1" ref="mrfThriftServiceClient" />
+		<constructor-arg index="2" ref="messageConverter" />
+	</bean>
+	<bean id="myRecoverCallback" class="com.nali.mrfclient.callermock.MyRecoverCallback" />
+	<bean id="feedRetryServiceConfig" class="com.nali.mrfclient.config.RetryServiceConfig">
+		<property name="retryServiceName">
+			<value>myRetryService</value>
+		</property>
+		<property name="retryQueueConfigs">
+			<list>
+				<bean class="com.nali.mrfclient.config.RetryQueueConfig">
+					<property name="businessQueueName">
+						<value>feedQ</value>
+					</property>
+					<property name="retryInterval">
+						<value>-1</value>
+					</property>
+					<property name="retryTimes">
+						<value>-1</value>
+					</property>
+					<property name="retryExceptions">
+						<list>
+							<value>java.io.IOException</value>
+							<value>java.lang.IllegalArgumentException</value>
+						</list>
+					</property>
+					<property name="recoverCallback" ref="myRecoverCallback">
+					</property>
+				</bean>
+				<bean class="com.nali.mrfclient.config.RetryQueueConfig">
+					<property name="businessQueueName">
+						<value>feedQ2</value>
+					</property>
+					<property name="retryInterval">
+						<value>3000</value>
+					</property>
+					<property name="retryTimes">
+						<value>5</value>
+					</property>
+				</bean>
+				<bean class="com.nali.mrfclient.config.RetryQueueConfig">
+					<property name="businessQueueName">
+						<value>readQ</value>
+					</property>
+					<property name="retryInterval">
+						<value>0</value>
+					</property>
+					<property name="retryTimes">
+						<value>-1</value>
+					</property>
+				</bean>
+			</list>
+		</property>
+	</bean>
+
+	<!-- MRF thrift client configuration -->
+	<util:properties id="mrfClientThrift"
+		location="classpath:thrift-mrf-client.properties" />
+	<bean id="mrfServiceClientFactory" class="com.ximalaya.thrift.client.ThriftConnectionFactory">
+		<property name="clientClass"
+			value="com.nali.mrfcore.thrift.MRFService.Client"></property>  <!-- TODO -->
+		<property name="host" value="#{mrfClientThrift['thrift.host']}"></property>
+		<property name="port" value="#{mrfClientThrift['thrift.port']}"></property>
+		<property name="soTimeout" value="#{mrfClientThrift['thrift.soTimeout']}"></property>
+		<property name="thriftClientPoolConfig">
+			<bean class="com.ximalaya.thrift.client.ThriftClientPoolConfig">
+				<property name="maxActive" value="#{mrfClientThrift['thrift.maxActive']}"></property>
+				<property name="minIdle" value="#{mrfClientThrift['thrift.minIdle']}"></property>
+				<property name="maxIdle" value="#{mrfClientThrift['thrift.maxIdle']}"></property>
+				<property name="maxWait" value="#{mrfClientThrift['thrift.maxWait']}"></property>
+				<property name="testWhileIdle" value="#{mrfClientThrift['thrift.testWhileIdle']}"></property>
+				<property name="timeBetweenEvictionRunsMillis"
+					value="#{mrfClientThrift['thrift.timeBetweenEvictionRunsMillis']}"></property>
+				<property name="numTestsPerEvictionRun"
+					value="#{mrfClientThrift['thrift.numTestsPerEvictionRun']}"></property>
+				<property name="minEvictableIdleTimeMillis"
+					value="#{mrfClientThrift['thrift.minEvictableIdleTimeMillis']}"></property>
+				<property name="softMinEvictableIdleTimeMillis"
+					value="#{mrfClientThrift['thrift.softMinEvictableIdleTimeMillis']}"></property>
+			</bean>
+		</property>
+		<property name="protocolType" value="compact"></property>
+	</bean>
+	<bean id="mrfThriftServiceClient" class="com.nali.mrfclient.thrift.MRFServiceThriftClient">
+		<property name="mrfServiceClientFactory" ref="mrfServiceClientFactory"></property>
+	</bean>
+</beans>

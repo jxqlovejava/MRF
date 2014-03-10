@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:task="http://www.springframework.org/schema/task"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
+		http://www.springframework.org/schema/task http://www.springframework.org/schema/task/spring-task-3.0.xsd
+		http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.0.xsd">
+	<!-- <context:property-placeholder system-properties-mode="OVERRIDE"/> pick 
+		up rabbit broker configuration <context:component-scan base-package="org.springframework.amqp.rabbit.stocks.config.server"/> -->
+	<!-- <context:property-placeholder location="classpath:/client.properties"/> -->
+	
+	<!-- retry service configuration -->
+	<bean id="mrfClientServiceStarter" class="com.nali.mrfclient.message.MRFClientServiceStarter">
+		<constructor-arg ref="feedRetryServiceConfig" />
+	</bean>
+	<bean id="feedRetryServiceConfig" class="com.nali.mrfclient.config.RetryServiceConfig">
+		<property name="retryServiceName">
+			<value>myRetryService</value>
+		</property>
+		<property name="retryQueueConfigs">
+			<list>
+				<bean class="com.nali.mrfclient.config.RetryQueueConfig">
+					<property name="businessQueueName">
+						<value>feedQ</value>
+					</property>
+					<property name="retryInterval">
+						<value>0</value>
+					</property>
+					<property name="retryTimes">
+						<value>5</value>
+					</property>
+					<property name="retryExceptions">
+						<list>
+							<value>java.io.IOException</value>
+							<value>java.lang.IllegalArgumentException</value>
+						</list>
+					</property>
+				</bean>
+				<bean class="com.nali.mrfclient.config.RetryQueueConfig">
+					<property name="businessQueueName">
+						<value>feedQ2</value>
+					</property>
+					<property name="retryInterval">
+						<value>3000</value>
+					</property>
+					<property name="retryTimes">
+						<value>3</value>
+					</property>
+				</bean>
+				<bean class="com.nali.mrfclient.config.RetryQueueConfig">
+					<property name="businessQueueName">
+						<value>readQ</value>
+					</property>
+					<property name="retryInterval">
+						<value>0</value>
+					</property>
+					<property name="retryTimes">
+						<value>-1</value>
+					</property>
+				</bean>
+			</list>
+		</property>
+	</bean>
+</beans>

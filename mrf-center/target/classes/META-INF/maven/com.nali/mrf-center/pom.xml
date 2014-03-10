@@ -1,0 +1,174 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+
+	<parent>
+		<groupId>com.nali</groupId>
+		<artifactId>mrf-parent</artifactId>
+		<version>0.0.3-SNAPSHOT</version>
+		<relativePath>../mrf-parent/pom.xml</relativePath>
+	</parent>
+
+	<artifactId>mrf-center</artifactId>
+	<packaging>war</packaging>
+	<name>mrf-center Maven Webapp</name>
+	<url>http://maven.apache.org</url>
+
+	<dependencies>
+		<dependency>
+			<groupId>com.nali</groupId>
+			<artifactId>mrf-core</artifactId>
+			<version>0.0.3-SNAPSHOT</version>
+		</dependency>
+
+		<!-- Used by MRF Center to generate global unique message id -->
+		<dependency>
+			<groupId>com.nali</groupId>
+			<artifactId>servercenter-api</artifactId>
+			<version>0.9.1</version>
+		</dependency>
+
+<!-- 		<dependency>
+			<groupId>org.apache.tomcat</groupId>
+			<artifactId>servlet-api</artifactId>
+			<version>6.0.29</version>
+		</dependency> -->
+		
+		<!-- Servlet -->
+		<dependency>
+			<groupId>javax.servlet</groupId>
+			<artifactId>servlet-api</artifactId>
+			<version>2.5</version>
+			<scope>provided</scope>
+		</dependency>
+		<dependency>
+			<groupId>javax.servlet.jsp</groupId>
+			<artifactId>jsp-api</artifactId>
+			<version>2.1</version>
+			<scope>provided</scope>
+		</dependency>
+		
+		<!-- JSTL -->
+		<dependency>
+			<groupId>javax.servlet</groupId>
+			<artifactId>jstl</artifactId>
+			<version>1.1.2</version>
+		</dependency>
+
+		<dependency>
+			<groupId>taglibs</groupId>
+			<artifactId>standard</artifactId>
+			<version>1.1.2</version>
+		</dependency>
+
+		<!-- used for iBatis data source -->
+		<dependency>
+			<groupId>commons-dbcp</groupId>
+			<artifactId>commons-dbcp</artifactId>
+			<version>1.2.2</version>
+		</dependency>
+	</dependencies>
+
+	<build>
+		<finalName>mrf-center</finalName>
+
+		<sourceDirectory>src/main/java</sourceDirectory>
+		<testSourceDirectory>src/test/java</testSourceDirectory>
+		<outputDirectory>target/classes</outputDirectory>
+		<testOutputDirectory>target/test-classes</testOutputDirectory>
+		<testResources>
+			<testResource>
+				<directory>src/test/resource</directory>
+			</testResource>
+		</testResources>
+		<resources>
+			<resource>
+				<directory>src/main/resources</directory>
+			</resource>
+			<resource>
+				<directory>src/main/conf/${envcfg.dir}</directory>
+			</resource>
+		</resources>
+		<directory>target</directory>
+
+		<pluginManagement>
+			<plugins>
+				<plugin>
+					<artifactId>maven-jar-plugin</artifactId>
+					<version>2.2</version>
+					<executions>
+						<execution>
+							<phase>package</phase>
+							<goals>
+								<goal>jar</goal>
+							</goals>
+						</execution>
+					</executions>
+					<configuration>
+						<!-- <excludes>
+							打Jar包时排除所有properties和xml文件
+							<exclude>*.properties</exclude>
+							<exclude>*.xml</exclude>
+							<exclude>*ibatis/</exclude>
+						</excludes> -->
+						<archive>
+							<addMavenDescriptor>true</addMavenDescriptor>
+							<manifestEntries>
+								<Class-Path>conf/</Class-Path>
+							</manifestEntries>
+							<manifest>
+								<addClasspath>true</addClasspath>
+								<classpathPrefix>lib/</classpathPrefix>
+								<addDefaultImplementationEntries>true</addDefaultImplementationEntries>
+								<addDefaultSpecificationEntries>true</addDefaultSpecificationEntries>
+								<mainClass>com.nali.mrfcenter.console.ConsoleRunner</mainClass>
+							</manifest>
+						</archive>
+					</configuration>
+				</plugin>
+				<plugin>
+					<groupId>org.apache.maven.plugins</groupId>
+					<artifactId>maven-war-plugin</artifactId>
+					<version>2.1.1</version>
+					<configuration>
+						<webResources>
+							<resource>
+								<directory>WebContent</directory>
+							</resource>
+						</webResources>
+					</configuration>
+				</plugin>
+			</plugins>
+		</pluginManagement>
+	</build>
+
+	<profiles>
+		<profile>
+			<id>base</id>
+			<activation>
+				<activeByDefault>true</activeByDefault>
+			</activation>
+			<properties>
+				<envcfg.dir>dev</envcfg.dir>
+			</properties>
+		</profile>
+		<profile>
+			<id>test</id>
+			<properties>
+				<envcfg.dir>test</envcfg.dir>
+			</properties>
+		</profile>
+		<profile>
+			<id>test-out</id>
+			<properties>
+				<envcfg.dir>test-out</envcfg.dir>
+			</properties>
+		</profile>
+		<profile>
+			<id>product</id>
+			<properties>
+				<envcfg.dir>product</envcfg.dir>
+			</properties>
+		</profile>
+	</profiles>
+</project>
